@@ -1,0 +1,8 @@
+# depslib dependency file v1.0
+1776792894 source:c:\users\huger\desktop\kasyno w c++ new\main.cpp
+	<iostream>
+	<cstdlib>
+	<windows.h>
+	<time.h>
+	<conio.h>
+
