@@ -7,6 +7,9 @@
 class Gracz{
 private:
     int saldo=0;
+    int liczba_gier=0;
+    int liczba_wygranych=0;
+    int najwieksza_wygrana=0;
 public:
     bool czy_mozesz_odjac(int kwota){
         if(saldo>=kwota)
@@ -26,6 +29,18 @@ public:
     int getSaldo(){
         return saldo;
     }
+    void updateStatystyk(int wygrana){
+        liczba_gier++;
+        if(wygrana>0){
+            liczba_wygranych++;
+        }
+        if(wygrana>najwieksza_wygrana){
+            najwieksza_wygrana=wygrana;
+        }
+    }
+    int getLiczbaGier(){return liczba_gier;}
+    int getLiczbaWygranychGier(){return liczba_wygranych;}
+    int getNajwiekszaWygrana(){return najwieksza_wygrana;}
 
 };
 
@@ -97,6 +112,7 @@ public:
                     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),7);
                 }
                 gracz.dodaj(win);
+                gracz.updateStatystyk(win);
                 }
                 else{
                     std::system("cls");
@@ -214,10 +230,9 @@ public:
             SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),7);
             gracz.dodaj(nagroda);
         }
+        gracz.updateStatystyk(nagroda);
         getch();
     }
-
-
 };
 
 int main()
@@ -254,7 +269,8 @@ int main()
         std::cout<<"1. Slots"<< std::endl;
         std::cout<<"2. Lotto" << std::endl;
         std::cout<<"3. Doladuj saldo" << std::endl;
-        std::cout<<"4. Exit" << std::endl;
+        std::cout<<"4. Statystyki" << std::endl;
+        std::cout<<"5. Exit" << std::endl;
         std::cout<<""<<std::endl;
         std::cout<<""<<std::endl;
         std::cout<<"Saldo: "<< gracz.getSaldo()<<"PLN"<<std::endl;
@@ -283,6 +299,28 @@ int main()
             }
             break;
         case '4':
+            std::system("cls");
+            SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),16);
+            std::cout<<"Statystyki gracza:\n";
+            SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),3);
+            std::cout<<"Liczba gier:" << gracz.getLiczbaGier()<<std::endl;
+            SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),4);
+            std::cout<<"Liczba wygranych: "<<gracz.getLiczbaWygranychGier()<<std::endl;
+            SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),5);
+            std::cout<<"Najwyzsza wygrana: "<<gracz.getNajwiekszaWygrana()<<std::endl;
+            SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),7);
+            std::cout<<""<<std::endl;
+            std::cout<<""<<std::endl;
+            std::cout<<""<<std::endl;
+            std::cout<<""<<std::endl;
+            std::cout<<"Zeby wyjsc do menu wcisnij 'q'.";
+            while(true){
+                char wyb1=getch();
+                if(wyb1=='q'|| wyb1=='Q')
+                    break;
+            }
+            break;
+        case '5':
             {
             kontynuuj=false;
             break;
