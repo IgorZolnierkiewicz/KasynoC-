@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <time.h>
 #include <conio.h>
+#include <fstream>
 
 class Gracz{
 private:
@@ -41,6 +42,29 @@ public:
     int getLiczbaGier(){return liczba_gier;}
     int getLiczbaWygranychGier(){return liczba_wygranych;}
     int getNajwiekszaWygrana(){return najwieksza_wygrana;}
+
+    void zapiszDoPliku(){
+        std::ofstream plik("kasyno_dane.txt");
+        if(plik.is_open()){
+            plik<<"Saldo: "<<saldo<<std::endl;
+            plik<<"Gry: "<<liczba_gier<<std::endl;
+            plik<<"Wygrane: "<<liczba_wygranych<<std::endl;
+            plik<<"Rekord "<<najwieksza_wygrana<<std::endl;
+            plik.close();
+        }
+    }
+
+    void wczytajZPliku(){
+        std::ifstream plik("kasyno_dane.txt");
+        if(plik.is_open()){
+            std::string etykieta;
+            plik>>etykieta>>saldo;
+            plik>>etykieta>>liczba_gier;
+            plik>>etykieta>>liczba_wygranych;
+            plik>>etykieta>>najwieksza_wygrana;
+            plik.close();
+        }
+    }
 
 };
 
@@ -237,13 +261,14 @@ public:
 
 int main()
 {
+    Gracz gracz;
+    gracz.wczytajZPliku();
     HANDLE hConsole=GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_CURSOR_INFO info={1,FALSE};
     SetConsoleCursorInfo(hConsole, &info);
 
     srand(time(NULL));
     bool kontynuuj=true;
-    Gracz gracz;
     Slots slots;
     Lotto lotto;
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),12);
@@ -273,7 +298,9 @@ int main()
         std::cout<<"5. Exit" << std::endl;
         std::cout<<""<<std::endl;
         std::cout<<""<<std::endl;
+        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),10);
         std::cout<<"Saldo: "<< gracz.getSaldo()<<"PLN"<<std::endl;
+        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),7);
 
         wybor=getch();
         switch(wybor)
@@ -322,6 +349,7 @@ int main()
             break;
         case '5':
             {
+                gracz.zapiszDoPliku();
             kontynuuj=false;
             break;
             }

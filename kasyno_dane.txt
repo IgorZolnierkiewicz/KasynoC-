@@ -1,0 +1,4 @@
+Saldo: 977
+Gry: 18
+Wygrane: 1
+Rekord 1000
