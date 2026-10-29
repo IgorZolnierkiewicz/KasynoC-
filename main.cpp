@@ -71,7 +71,7 @@ public:
 
 };
 
-class BlackJack{
+class blackJack{
 private:
     struct karta{
         std::string nazwa;
@@ -82,7 +82,7 @@ public:
     void przygotujTalie(){
         std::string kolory[]={"Kier","Karo","Trefl","Pik"};
         std::string figury[]={"2","3","4","5","6","7","8","9","10","Walet","Dama","Krol","As"};
-        int wartosci[]={2,3,4,5,6,7,8,9,10,11};
+        int wartosci[]={2,3,4,5,6,7,8,9,10,10,10,10,11};
         for(int i=0;i<4;i++){
             for(int j=0;j<13;j++){
                 karta nowaKarta;
@@ -127,10 +127,103 @@ public:
                     ok=false;
                 }
             }while(!ok);
-        }
+            std::vector<karta> rekaGracza;
+            std::vector<karta> rekaKrupiera;
 
-    }
-};
+            //rozdawanie kart
+
+            rekaGracza.push_back(talia.back());
+            talia.pop_back();
+            rekaKrupiera.push_back(talia.back());
+            talia.pop_back();
+            rekaGracza.push_back(talia.back());
+            talia.pop_back();
+            rekaKrupiera.push_back(talia.back());
+            talia.pop_back();
+
+            int sumaPoczatkowaGracza=rekaGracza[0].wartosc+rekaGracza[1].wartosc;
+            if(rekaGracza.size()==2&&sumaPoczatkowaGracza==21){
+                std::cout<<"\n=== BlACKJACK! Masz 21 z dwóch kart!===\n";
+                int sumaPoczatkowaKrupiera=rekaKrupiera[0].wartosc+rekaKrupiera[1].wartosc;
+                if(sumaPoczatkowaKrupiera==21){
+                    std::cout<<"Krupier rowniez ma BlackJacka! Remis. Zwrot stawki.\n";
+                    gracz.dodaj(stawka);
+                }else{
+                    std::cout<<"Wygrywasz: "<<stawka*2.5<<std::endl;
+                    gracz.dodaj(stawka*2.5);
+                }
+            }
+            else{
+            char decyzja;
+            bool turaGracza=true;
+            int wartosc_kart;
+            while(turaGracza){
+                wartosc_kart=0;
+                std::system("cls");
+                std::cout<<"Twoje karty"<<std::endl;
+                for(int i=0;i<rekaGracza.size();i++){
+                    std::cout<< "- "<<rekaGracza[i].nazwa<<"(Wartosc: "<<rekaGracza[i].wartosc<<")\n";
+                    wartosc_kart+=rekaGracza[i].wartosc;
+                }
+                std::cout<<"Aktualna suma puntkow: "<<wartosc_kart<<"\n";
+                if(wartosc_kart>21){
+                    std::cout<<"Przekroczyles/as 21puntkow! Przegrywasz.\n";
+                    break;
+                }
+                std::cout<<"- " <<rekaKrupiera[0].nazwa << std::endl;
+                std::cout<<"- [Karta zakryta]\n";
+                std::cout<<"\n[1] Dobierz karte (Hit)\n";
+                std::cout<< "[2] Pasuj (Stand)\n";
+                std::cout<<"Twoj wybor: ";
+                std::cin>>decyzja;
+                switch(decyzja){
+                case '1':
+                    rekaGracza.push_back(talia.back());
+                    talia.pop_back();
+                    break;
+                case '2':
+                    turaGracza=false;
+                    break;
+                default:
+                    std::cout<< "Nie ma takiej opcji, wybierz 1 lub 2.\n";
+                    break;
+                }
+            }
+            if(wartosc_kart<=21){
+                std::cout<<"\nTura krupiera...\n";
+                int wartoscKrupiera=0;
+                wartoscKrupiera=rekaKrupiera[0].wartosc+rekaKrupiera[1].wartosc;
+                while(wartoscKrupiera<17){
+                    rekaKrupiera.push_back(talia.back());
+                    talia.pop_back();
+                    karta dobralKrupier=rekaKrupiera[rekaKrupiera.size()-1];
+                    std::cout<<"Krupier dobiera karte: "<<dobralKrupier.nazwa<<" (Wartosc: "<< dobralKrupier.wartosc << ")\n";
+                    wartoscKrupiera+=rekaKrupiera[rekaKrupiera.size()-1].wartosc;
+                }
+                if(wartoscKrupiera>21){
+                    gracz.dodaj(2*stawka);
+                    std::cout <<"Wygrales "<<2*stawka<<std::endl;
+                }
+                else if(wartosc_kart>wartoscKrupiera){
+                    gracz.dodaj(2*stawka);
+                    std::cout<<"\nWygrales!!!"<<2*stawka<<std::endl;
+                }
+                else if(wartoscKrupiera>wartosc_kart){
+                    std::cout<<"\nPrzegrales...\n";
+                }
+                else if(wartoscKrupiera==wartosc_kart){
+                    std::cout<<"\nRemis!\n";
+                    gracz.dodaj(stawka);
+                }
+
+            }
+
+
+        }//koniec else po sprawdzaniu czy byl blackjack
+        }//koniec petly gry
+
+    }//koniec void graj
+};//koniec klasy
 
 
 class Slots{
@@ -336,6 +429,7 @@ int main()
     bool kontynuuj=true;
     Slots slots;
     Lotto lotto;
+    blackJack stolBlackjacka;
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),12);
     std::cout << "------------------" << std::endl;
     //SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
@@ -360,7 +454,8 @@ int main()
         std::cout<<"2. Lotto" << std::endl;
         std::cout<<"3. Doladuj saldo" << std::endl;
         std::cout<<"4. Statystyki" << std::endl;
-        std::cout<<"5. Exit" << std::endl;
+        std::cout<<"5. Blackjack" << std::endl;
+        std::cout<<"6. Exit" << std::endl;
         std::cout<<""<<std::endl;
         std::cout<<""<<std::endl;
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),10);
@@ -413,6 +508,11 @@ int main()
             }
             break;
         case '5':
+            std::system("cls");
+            stolBlackjacka.graj(gracz);
+            break;
+
+        case '6':
             {
                 gracz.zapiszDoPliku();
             kontynuuj=false;
