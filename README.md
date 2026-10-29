@@ -8,4 +8,4 @@ To enter the program you will need a C++ compiler.
 - 🍒 Slots
 - 🎟️ Lotto
 - 💰 Working money system
-- Stats ( how many games you have played, how many did u win etc.)
+- Stats in a separate file ( how many games you have played, how many did u win etc.)
