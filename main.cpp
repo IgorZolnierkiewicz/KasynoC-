@@ -4,6 +4,9 @@
 #include <time.h>
 #include <conio.h>
 #include <fstream>
+#include <vector>
+#include <algorithm>
+#include <random>
 
 class Gracz{
 private:
@@ -67,6 +70,68 @@ public:
     }
 
 };
+
+class BlackJack{
+private:
+    struct karta{
+        std::string nazwa;
+        int wartosc;
+    };
+    std::vector<karta> talia;
+public:
+    void przygotujTalie(){
+        std::string kolory[]={"Kier","Karo","Trefl","Pik"};
+        std::string figury[]={"2","3","4","5","6","7","8","9","10","Walet","Dama","Krol","As"};
+        int wartosci[]={2,3,4,5,6,7,8,9,10,11};
+        for(int i=0;i<4;i++){
+            for(int j=0;j<13;j++){
+                karta nowaKarta;
+                nowaKarta.nazwa=figury[j]+" "+kolory[i];
+                nowaKarta.wartosc=wartosci[j];
+
+                talia.push_back(nowaKarta);
+            }
+        }
+    }
+    void przetastujTalie(){
+        std::random_device rd;
+        std::default_random_engine g(rd());
+        std::shuffle(talia.begin(),talia.end(),g);
+    }
+    void graj(Gracz &gracz){
+        while(true){
+            przygotujTalie();
+            przetastujTalie();
+            bool ok;
+            int stawka;
+            do{
+                ok=true;
+                std::cout<<"Podaj stawke za jaka chcesz zagrac: ";
+                std::cin>>stawka;
+                if(stawka<=0){
+                    std::cout<<"Za tyle to sobie nie pogracz ^-^";
+                    ok=false;
+                    continue;
+                }
+                if(std::cin.fail()){
+                    std::cout<<"Podaj liczbe a nie tekst !";
+                    std::cin.clear();
+                    std::cin.ignore(10000,'\n');
+                    ok=false;
+                    continue;
+                }
+                if(gracz.czy_mozesz_odjac(stawka))
+                    gracz.odejmij(stawka);
+                else{
+                    std::cout<<"Za malo srodkow";
+                    ok=false;
+                }
+            }while(!ok);
+        }
+
+    }
+};
+
 
 class Slots{
 private:
