@@ -7,6 +7,8 @@
 #include <vector>
 #include <algorithm>
 #include <random>
+#include <sstream>
+#include <chrono>
 
 class Gracz{
 private:
@@ -94,8 +96,8 @@ public:
         }
     }
     void przetastujTalie(){
-        std::random_device rd;
-        std::default_random_engine g(rd());
+        unsigned int ziarno=std::chrono::system_clock::now().time_since_epoch().count();
+        std::default_random_engine g(ziarno);
         std::shuffle(talia.begin(),talia.end(),g);
     }
     void graj(Gracz &gracz){
@@ -104,20 +106,26 @@ public:
             przetastujTalie();
             bool ok;
             int stawka;
+            std::string inputStawka;
             do{
                 ok=true;
-                std::cout<<"Podaj stawke za jaka chcesz zagrac: ";
-                std::cin>>stawka;
+                std::cout<<"Podaj stawke za jaka chcesz zagrac: (lub 'q' aby wyjsc):";
+                std::cin>>inputStawka;
+                if(inputStawka=="q"||inputStawka=="Q")
+                    return;
+                std::stringstream ss(inputStawka);
+                if(!(ss>>stawka)){
+                    std::cout<<"Podaj liczbe a nie tekst!\n";
+                    ok=false;
+                    Sleep(750);
+                    std::system("cls");
+                    continue;
+                }
                 if(stawka<=0){
                     std::cout<<"Za tyle to sobie nie pogracz ^-^";
                     ok=false;
-                    continue;
-                }
-                if(std::cin.fail()){
-                    std::cout<<"Podaj liczbe a nie tekst !";
-                    std::cin.clear();
-                    std::cin.ignore(10000,'\n');
-                    ok=false;
+                    Sleep(750);
+                    std::system("cls");
                     continue;
                 }
                 if(gracz.czy_mozesz_odjac(stawka))
@@ -143,13 +151,17 @@ public:
 
             int sumaPoczatkowaGracza=rekaGracza[0].wartosc+rekaGracza[1].wartosc;
             if(rekaGracza.size()==2&&sumaPoczatkowaGracza==21){
-                std::cout<<"\n=== BlACKJACK! Masz 21 z dwóch kart!===\n";
+                SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+                std::cout<<"\n=== BlACKJACK! Masz 21 z dwoch kart!===\n";
+                SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
                 int sumaPoczatkowaKrupiera=rekaKrupiera[0].wartosc+rekaKrupiera[1].wartosc;
                 if(sumaPoczatkowaKrupiera==21){
                     std::cout<<"Krupier rowniez ma BlackJacka! Remis. Zwrot stawki.\n";
                     gracz.dodaj(stawka);
                 }else{
                     std::cout<<"Wygrywasz: "<<stawka*2.5<<std::endl;
+                    getch();
+                    system("cls");
                     gracz.dodaj(stawka*2.5);
                 }
             }
@@ -167,7 +179,12 @@ public:
                 }
                 std::cout<<"Aktualna suma puntkow: "<<wartosc_kart<<"\n";
                 if(wartosc_kart>21){
-                    std::cout<<"Przekroczyles/as 21puntkow! Przegrywasz.\n";
+                    std::cout<<"Przekroczyles/as 21puntkow!\n";
+                    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+                    std::cout<<"Przegrywasz.\n";
+                    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+                    getch();
+                    system("cls");
                     break;
                 }
                 std::cout<<"- " <<rekaKrupiera[0].nazwa << std::endl;
@@ -189,32 +206,49 @@ public:
                     break;
                 }
             }
+
             if(wartosc_kart<=21){
                 std::cout<<"\nTura krupiera...\n";
+
+                std::cout<<"Karty krupiera: \n";
+                std::cout<<rekaKrupiera[0].nazwa <<" (Wartosc: "<<rekaKrupiera[0].wartosc<<")\n";
+                std::cout<<rekaKrupiera[1].nazwa <<" (Wartosc: "<<rekaKrupiera[1].wartosc<<")\n";
                 int wartoscKrupiera=0;
                 wartoscKrupiera=rekaKrupiera[0].wartosc+rekaKrupiera[1].wartosc;
+                std::cout<<"Poczatkowa suma krupiera: "<<wartoscKrupiera<<"\n\n";
                 while(wartoscKrupiera<17){
                     rekaKrupiera.push_back(talia.back());
                     talia.pop_back();
                     karta dobralKrupier=rekaKrupiera[rekaKrupiera.size()-1];
                     std::cout<<"Krupier dobiera karte: "<<dobralKrupier.nazwa<<" (Wartosc: "<< dobralKrupier.wartosc << ")\n";
                     wartoscKrupiera+=rekaKrupiera[rekaKrupiera.size()-1].wartosc;
+                    std::cout<<"Suma krupiera po dobraniu: "<<wartoscKrupiera<< std::endl;
                 }
                 if(wartoscKrupiera>21){
                     gracz.dodaj(2*stawka);
+                    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
                     std::cout <<"Wygrales "<<2*stawka<<std::endl;
+                    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
                 }
                 else if(wartosc_kart>wartoscKrupiera){
                     gracz.dodaj(2*stawka);
-                    std::cout<<"\nWygrales!!!"<<2*stawka<<std::endl;
+                    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+                    std::cout<<"\nWygrales"<<2*stawka<<std::endl;
+                    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
                 }
                 else if(wartoscKrupiera>wartosc_kart){
+                    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
                     std::cout<<"\nPrzegrales...\n";
+                SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
                 }
                 else if(wartoscKrupiera==wartosc_kart){
+                    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),14 );
                     std::cout<<"\nRemis!\n";
+                    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
                     gracz.dodaj(stawka);
                 }
+                getch();
+                std::system("cls");
 
             }
 

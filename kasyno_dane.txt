@@ -1,4 +1,4 @@
-Saldo: 977
+Saldo: 27
 Gry: 18
 Wygrane: 1
 Rekord 1000
