@@ -122,7 +122,7 @@ public:
                     continue;
                 }
                 if(stawka<=0){
-                    std::cout<<"Za tyle to sobie nie pogracz ^-^";
+                    std::cout<<"Za tyle to sobie nie pogracz ^-^\n";
                     ok=false;
                     Sleep(750);
                     std::system("cls");
@@ -131,8 +131,11 @@ public:
                 if(gracz.czy_mozesz_odjac(stawka))
                     gracz.odejmij(stawka);
                 else{
-                    std::cout<<"Za malo srodkow";
+                    std::cout<<"Za malo srodkow\n";
                     ok=false;
+                    Sleep(750);
+                    std::system("cls");
+                    continue;
                 }
             }while(!ok);
             std::vector<karta> rekaGracza;
